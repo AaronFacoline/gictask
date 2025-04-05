@@ -95,6 +95,22 @@ public class BookManagementService {
     }
 
     /**
+     * Deletes a book by its identifier.
+     *
+     * @param id the unique identifier of the book to be deleted
+     * @return a BookResponseDTO object representing the deleted book's information,
+     *         or null if the book is not found
+     */
+    public BookResponseDTO deleteBook(Long id) {
+        BookEntity bookEntity = bookRepository.findById(id).orElse(null);
+        if (bookEntity == null) {
+            return null;
+        }
+        bookRepository.deleteById(id);
+        return bookEntityToBookDTO(bookEntity);
+    }
+
+    /**
      * Converts a {@code BookEntity} object into a {@code BookResponseDTO} object.
      *
      * @param bookEntity the {@code BookEntity} instance to be converted
