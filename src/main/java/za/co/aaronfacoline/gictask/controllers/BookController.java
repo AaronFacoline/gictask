@@ -1,6 +1,7 @@
 package za.co.aaronfacoline.gictask.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import za.co.aaronfacoline.gictask.dtos.BookRequestDTO;
@@ -66,8 +67,8 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookResponseDTO>> getListOfBooks(){
-        List<BookResponseDTO> books = bookManagementService.getBooks();
+    public ResponseEntity<Page<BookResponseDTO>> getListOfBooks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        Page<BookResponseDTO> books = bookManagementService.getBooks(page,size);
         if (books == null) {
             return ResponseEntity.notFound().build();
         }

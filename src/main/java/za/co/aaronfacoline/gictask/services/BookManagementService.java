@@ -1,14 +1,14 @@
 package za.co.aaronfacoline.gictask.services;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import za.co.aaronfacoline.gictask.dtos.BookRequestDTO;
 import za.co.aaronfacoline.gictask.dtos.BookResponseDTO;
 import za.co.aaronfacoline.gictask.entities.BookEntity;
 import za.co.aaronfacoline.gictask.repositories.BookRepository;
 import za.co.aaronfacoline.gictask.utils.ISBNGenerator;
-
-import java.util.List;
 
 /**
  * Service class for managing books in the system.
@@ -112,12 +112,13 @@ public class BookManagementService {
         return bookEntityToBookDTO(bookEntity);
     }
 
-    public List<BookResponseDTO> getBooks() {
-        List<BookEntity> bookEntities = bookRepository.findAll();
-        if (bookEntities == null) {
+    public Page<BookResponseDTO> getBooks(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<BookEntity> bookEntities = bookRepository.findAll(pageRequest);
+        if (bookEntities.getSize() == 0) {
             return null;
         }
-        return bookEntities.stream().map(this::bookEntityToBookDTO).toList();
+        return bookEntities.map(this::bookEntityToBookDTO);
     }
 
     /**
