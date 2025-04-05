@@ -114,6 +114,15 @@ public class BookManagementService {
         return bookEntityToBookDTO(bookEntity);
     }
 
+    /**
+     * Retrieves a paginated list of books filtered by the specified criteria.
+     *
+     * @param page   the page number to retrieve (zero-based index).
+     * @param size   the number of items per page.
+     * @param title  the title or part of the title to filter books by, can be null.
+     * @param author the author or part of the author's name to filter books by, can be null.
+     * @return a paginated list of books wrapped in a {@code Page<BookResponseDTO>}, or null if no matching books are found.
+     */
     public Page<BookResponseDTO> getBooks(int page, int size, String title, String author) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Specification<BookEntity> specification = (root, query, criteriaBuilder) -> {
