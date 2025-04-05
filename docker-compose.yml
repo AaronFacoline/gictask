@@ -1,0 +1,24 @@
+services:
+  mysql-db:
+    image: mysql:9.2.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: somerandompassword
+      MYSQL_DATABASE: gic
+    ports:
+      - "3306:3306"
+    container_name: mysql-db
+
+  java-app:
+    image: gic-task-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    container_name: gic-task-container
+    restart: unless-stopped
+
+volumes:
+  db:
+    driver: local
