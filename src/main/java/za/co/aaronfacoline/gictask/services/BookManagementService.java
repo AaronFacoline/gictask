@@ -8,6 +8,8 @@ import za.co.aaronfacoline.gictask.entities.BookEntity;
 import za.co.aaronfacoline.gictask.repositories.BookRepository;
 import za.co.aaronfacoline.gictask.utils.ISBNGenerator;
 
+import java.util.List;
+
 /**
  * Service class for managing books in the system.
  * This class utilizes an instance of {@link BookRepository} for data storage
@@ -108,6 +110,14 @@ public class BookManagementService {
         }
         bookRepository.deleteById(id);
         return bookEntityToBookDTO(bookEntity);
+    }
+
+    public List<BookResponseDTO> getBooks() {
+        List<BookEntity> bookEntities = bookRepository.findAll();
+        if (bookEntities == null) {
+            return null;
+        }
+        return bookEntities.stream().map(this::bookEntityToBookDTO).toList();
     }
 
     /**
