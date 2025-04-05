@@ -16,7 +16,10 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<Object> createBook(@RequestBody BookRequestDTO bookRequestDTO) {
-        bookManagementService.addBook(bookRequestDTO);
+        boolean added = bookManagementService.addBook(bookRequestDTO);
+        if (!added) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok().build();
     }
 

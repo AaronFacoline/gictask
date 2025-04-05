@@ -28,16 +28,23 @@ public class BookManagementService {
      * Adds a new book to the repository and assigns a generated ISBN to it.
      *
      * @param bookRequestDTO the data transfer object containing the details of the book to be added,
-     *                such as the title and author.
+     *                       such as the title and author.
      */
     @Transactional
-    public void addBook(BookRequestDTO bookRequestDTO) {
+    public boolean addBook(BookRequestDTO bookRequestDTO) {
+
+        if (bookRequestDTO.getTitle() == null || bookRequestDTO.getAuthor() == null ||
+                bookRequestDTO.getTitle().isBlank() || bookRequestDTO.getAuthor().isBlank() ||
+                bookRequestDTO.getTitle().length() > 100 || bookRequestDTO.getAuthor().length() > 50) {
+            return false;
+        }
 
         BookEntity bookEntity = new BookEntity();
         bookEntity.setTitle(bookRequestDTO.getTitle());
         bookEntity.setAuthor(bookRequestDTO.getAuthor());
         bookEntity = bookRepository.save(bookEntity);
         bookEntity.setIsbn(isbnGenerator.generateISBN(bookEntity.getId()));
+        return true;
 
     }
 
@@ -46,7 +53,7 @@ public class BookManagementService {
      *
      * @param id the ID of the book to retrieve
      * @return a {@code BookResponseDTO} containing the details of the book if found,
-     *         or {@code null} if no book with the given ID exists.
+     * or {@code null} if no book with the given ID exists.
      */
     public BookResponseDTO getBook(Long id) {
         BookEntity bookEntity = bookRepository.findById(id).orElse(null);
@@ -61,9 +68,9 @@ public class BookManagementService {
      *
      * @param bookRequestDTO the data transfer object containing updated details of the book,
      *                       including the title, author, and ISBN.
-     * @param id the ID of the book to be updated.
+     * @param id             the ID of the book to be updated.
      * @return a {@code BookResponseDTO} containing the updated details of the book if the book exists,
-     *         or {@code null} if no book with the given ID is found.
+     * or {@code null} if no book with the given ID is found.
      */
     public BookResponseDTO updateBook(BookRequestDTO bookRequestDTO, Long id) {
 
@@ -71,7 +78,10 @@ public class BookManagementService {
         if (bookEntity == null) {
             return null;
         }
-        if(!isbnGenerator.validateISBN(bookRequestDTO.getIsbn())){
+        if (!isbnGenerator.validateISBN(bookRequestDTO.getIsbn()) ||
+                bookRequestDTO.getTitle() == null || bookRequestDTO.getAuthor() == null ||
+                bookRequestDTO.getTitle().isBlank() || bookRequestDTO.getAuthor().isBlank() ||
+                bookRequestDTO.getTitle().length() > 100 || bookRequestDTO.getAuthor().length() > 50) {
             BookEntity invalidISBN = new BookEntity();
             invalidISBN.setId(-1L);
             return bookEntityToBookDTO(invalidISBN);
