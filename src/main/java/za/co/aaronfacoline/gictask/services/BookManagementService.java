@@ -40,6 +40,14 @@ public class BookManagementService {
 
     }
 
+    public BookDTO getBook(Long id) {
+        BookEntity bookEntity = bookRepository.findById(id).orElse(null);
+        if (bookEntity == null) {
+            return null;
+        }
+        return bookEntityToBookDTO(bookEntity);
+    }
+
     private BookDTO bookEntityToBookDTO(BookEntity bookEntity) {
         BookDTO bookDTO = new BookDTO();
         bookDTO.setId(bookEntity.getId());
