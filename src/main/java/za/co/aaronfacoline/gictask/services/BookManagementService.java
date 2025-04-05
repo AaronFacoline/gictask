@@ -1,8 +1,10 @@
 package za.co.aaronfacoline.gictask.services;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import za.co.aaronfacoline.gictask.dtos.BookRequestDTO;
 import za.co.aaronfacoline.gictask.dtos.BookResponseDTO;
@@ -112,9 +114,22 @@ public class BookManagementService {
         return bookEntityToBookDTO(bookEntity);
     }
 
-    public Page<BookResponseDTO> getBooks(int page, int size) {
+    public Page<BookResponseDTO> getBooks(int page, int size, String title, String author) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<BookEntity> bookEntities = bookRepository.findAll(pageRequest);
+        Specification<BookEntity> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            if(title != null){
+                Predicate titlePredicate = criteriaBuilder.like(root.get("title"), "%" + title + "%");
+                predicate = criteriaBuilder.and(predicate, titlePredicate);
+            }
+            if(author != null){
+                Predicate authorPredicate = criteriaBuilder.like(root.get("author"), "%" + author + "%");
+                predicate = criteriaBuilder.and(predicate, authorPredicate);
+            }
+
+            return predicate;
+        };
+        Page<BookEntity> bookEntities = bookRepository.findAll(specification, pageRequest);
         if (bookEntities.getSize() == 0) {
             return null;
         }

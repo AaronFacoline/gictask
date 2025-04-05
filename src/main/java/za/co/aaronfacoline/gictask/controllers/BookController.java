@@ -8,8 +8,6 @@ import za.co.aaronfacoline.gictask.dtos.BookRequestDTO;
 import za.co.aaronfacoline.gictask.dtos.BookResponseDTO;
 import za.co.aaronfacoline.gictask.services.BookManagementService;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/books")
@@ -67,8 +65,8 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BookResponseDTO>> getListOfBooks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
-        Page<BookResponseDTO> books = bookManagementService.getBooks(page,size);
+    public ResponseEntity<Page<BookResponseDTO>> getListOfBooks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String title, @RequestParam(required = false) String author){
+        Page<BookResponseDTO> books = bookManagementService.getBooks(page,size,title,author);
         if (books == null) {
             return ResponseEntity.notFound().build();
         }
